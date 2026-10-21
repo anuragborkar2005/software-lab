@@ -1,0 +1,5 @@
+Software Requirement Specification (SRS) Excerpt
+Module: Digital Library Circulation & Lending Management System
+
+Requirement Description:
+"A registered library member can borrow up to a maximum of 3 physical books at any given time for an allowable lending period of 14 days per book. If a borrowed book is not returned within 14 days, the system marks the book as overdue, levies an automated daily overdue fine of $1.00 per late day, and automatically suspends the member's borrowing and renewal privileges until all overdue books are checked in and outstanding fines are cleared. A member can view their active borrowings, search catalog availability, and request a 7-day renewal for an active loan provided the book has not been reserved by another patron and no outstanding penalties exist on the member's account. Library Staff (Librarians) have authorization to process check-ins and check-outs, manually override account suspensions under administrative discretion, issue fee waivers, and view delinquent account audit reports."

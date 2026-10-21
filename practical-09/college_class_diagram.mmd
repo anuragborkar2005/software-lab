@@ -1,0 +1,49 @@
+classDiagram
+    class Department {
+        -int deptId
+        -String deptName
+        -String building
+        +getFacultyList() List
+        +getCourses() List
+    }
+
+    class Student {
+        -int studentId
+        -String firstName
+        -String lastName
+        -String email
+        -int enrollmentYear
+        +registerCourse(Course course) boolean
+        +viewGrades() Map
+    }
+
+    class Faculty {
+        -int facultyId
+        -String fullName
+        -String email
+        -String designation
+        +assignGrade(Student s, Course c, String grade) void
+        +getSyllabus(Course c) String
+    }
+
+    class Course {
+        -String courseId
+        -String courseName
+        -int credits
+        +getEnrolledStudents() List
+        +isFull() boolean
+    }
+
+    class Enrollment {
+        -int enrollmentId
+        -String semester
+        -String grade
+        +calculateGPA() double
+    }
+
+    Department "1" --> "*" Student : contains
+    Department "1" --> "*" Faculty : employs
+    Department "1" --> "*" Course : offers
+    Faculty "1" --> "*" Course : instructs
+    Student "1" --> "*" Enrollment : enters
+    Course "1" --> "*" Enrollment : enrolled_by

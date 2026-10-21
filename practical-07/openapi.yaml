@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Book Catalog REST API
+  description: >-
+    A lightweight RESTful API for managing a library book catalog, implemented in
+    Flask. Supports retrieving the list of books and adding new books with validation.
+  version: 1.0.0
+  contact:
+    name: Software Engineering Lab
+    email: lab@example.edu
+
+servers:
+  - url: http://127.0.0.1:5000
+    description: Local development server
+
+paths:
+  /books:
+    get:
+      summary: Retrieve all books
+      description: >-
+        Returns all books currently registered in the catalog, along with the
+        total count. This endpoint has no path or query parameters.
+      operationId: getBooks
+      tags:
+        - Books
+      responses:
+        '200':
+          description: The books and their total count.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - books
+                  - total
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  total:
+                    type: integer
+                    example: 2
+              example:
+                books:
+                  - id: 1
+                    title: Clean Code
+                    author: Robert C. Martin
+                    year: 2008
+                  - id: 2
+                    title: The Pragmatic Programmer
+                    author: Andrew Hunt & David Thomas
+                    year: 1999
+                total: 2
+
+    post:
+      summary: Add a new book
+      description: >-
+        Registers a new book in the catalog. Requires non-empty `title` and
+        `author`; this endpoint has no path or query parameters. Send the body
+        as JSON with `Content-Type: application/json`.
+      operationId: addBook
+      tags:
+        - Books
+      requestBody:
+        description: Book object that needs to be added to the catalog.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBookInput'
+            example:
+              title: Designing Data-Intensive Applications
+              author: Martin Kleppmann
+              year: 2017
+      responses:
+        '201':
+          description: Book successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                  - book
+                properties:
+                  message:
+                    type: string
+                    example: Book added successfully
+                  book:
+                    $ref: '#/components/schemas/Book'
+              example:
+                message: Book added successfully
+                book:
+                  id: 3
+                  title: Designing Data-Intensive Applications
+                  author: Martin Kleppmann
+                  year: 2017
+        '400':
+          description: Invalid JSON body or missing/invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingTitle:
+                  summary: Missing or empty title
+                  value:
+                    error: "'title' is required and must be a non-empty string"
+                missingAuthor:
+                  summary: Missing or empty author
+                  value:
+                    error: "'author' is required and must be a non-empty string"
+                invalidJson:
+                  summary: Missing, invalid, or empty JSON body
+                  value:
+                    error: Request body must be valid JSON
+
+components:
+  schemas:
+    Book:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - year
+      properties:
+        id:
+          type: integer
+          description: Unique auto-incremented identifier for the book.
+          example: 1
+        title:
+          type: string
+          description: Title of the book.
+          example: Clean Code
+        author:
+          type: string
+          description: Author(s) of the book.
+          example: Robert C. Martin
+        year:
+          type: integer
+          nullable: true
+          description: Year of publication.
+          example: 2008
+
+    NewBookInput:
+      type: object
+      required:
+        - title
+        - author
+      properties:
+        title:
+          type: string
+          description: Non-empty title of the book.
+          example: Designing Data-Intensive Applications
+        author:
+          type: string
+          description: Non-empty author of the book.
+          example: Martin Kleppmann
+        year:
+          description: >-
+            Optional publication year. The server converts an integer or a
+            string containing only digits to an integer. If omitted, null, or
+            any other JSON value is supplied, the stored year is null.
+          example: 2017
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error description.
+          example: "'author' is required and must be a non-empty string"
